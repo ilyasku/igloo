@@ -2,7 +2,7 @@
 """
 Created on Thu Apr 14 16:42:55 2016
 
-@author: bgeurten
+@author: bgeurten, ilyas
 """
 from scipy import stats
 from tqdm import tqdm
@@ -12,9 +12,9 @@ import matplotlib.pyplot as plt
 import scipy.io as sio
 import os
 
-# Subfunctions 
-import locomotionInterpolation as lI
-import locomotionOnRawData as lORD
+from . import locomotionInterpolation as lI
+from . import locomotionOnRawData as lORD
+
 
 class IGLOO:
     def __init__(self,startPos=25.,gradientExt=(12.,32.),gradientDist=50.,
@@ -309,10 +309,10 @@ class IGLOO:
                   
             
         #interpolate the data to fix samplerate
-        xi = np.linspace(0,self.walkDur,self.walkDur*self.sps) # time vector
-        pos = np.interp(xi,self.tempTrace[:,0],self.tempTrace[:,1]) # positions
-        aT = np.interp(xi,self.tempTrace[:,0],self.tempTrace[:,2]) # ambient Temperature
-        dT = np.interp(xi,self.tempTrace[:,0],self.tempTrace[:,3]) # animal Temperature
+        xi = np.linspace(0, self.walkDur, int(self.walkDur*self.sps))    # time vector
+        pos = np.interp(xi, self.tempTrace[:, 0], self.tempTrace[:, 1])  # positions
+        aT = np.interp(xi, self.tempTrace[:, 0], self.tempTrace[:, 2])   # ambient Temperature
+        dT = np.interp(xi, self.tempTrace[:, 0], self.tempTrace[:, 3])   # animal Temperature
             
         #built return matrix
         self.tempTrace = np.column_stack((xi,pos))
@@ -333,7 +333,7 @@ class IGLOO:
         # preallocate output variable
         self.flyPop = np.zeros((int(self.walkDur*self.sps),3,flyN))
         # simulate all flys
-        for flyI in tqdm(xrange(0,flyN)):
+        for flyI in tqdm(range(0,flyN)):
             self.simulateSingleFly()
             self.flyPop[:,:,flyI] = self.tempTrace[:,1:4]
             # plot if needed
